@@ -1,76 +1,40 @@
-#"""Desenvolver um menu de múltipla escolha usando as funções if, elif else"""
- #print("""
- #     Menu: 
-#1) Para cadastrar novo usuário
-#2) Para editar dados de usuários
-#3) Deletar usuário
-#4) Criar novo banco de dados
-#5) Exibir relatório
-#0) Para sair 
-
 import sqlite3, time
 
 connect=sqlite3.connect('pessoafisica.db')
 c=connect.cursor()
-#users=('SELECT nome FROM cadastro')
 
-def criar_db():
-    c.execute('CREATE TABLE IF NOT EXISTS cadastro (nome text, cpf varchar, endereco text, email text)')
-try:
-    criar_db()
-except:
-    print('Erro ao criar Database.')
-else:
-    print('Database criada com sucesso.')
+#def criar_db():
+#    c.execute('CREATE TABLE IF NOT EXISTS cadastro (nome text, cpf varchar, endereco text, email text, empresa text, cargo text)')
+#try:
+#    criar_db()
+#except:
+#    print('Erro ao criar banco de dados.')
+#else:
+#    print('Banco de dados criado com sucesso.')
 
-############################################
-###FUNÇÃO INSERIR DADOS NO BANCO DE DADOS###
-############################################
-
-def inserirDados(n, cpf, end, e, tel, empresa, cargo):
-    c.execute('INSERT INTO cadastro VALUES(?, ?, ?, ?, ?, ?, ?)', (n, cpf, end, e, tel, empresa, cargo))
+def inserirDados(n, cpf, end, e, emp, carg):
+    c.execute('INSERT INTO cadastro VALUES(?, ?, ?, ?, ?, ?)', (n, cpf, end, e, emp, carg))
     connect.commit()
 
-#############################################
-###FUNÇÃO CONSULTA DADOS NO BANCO DE DADOS###
-#############################################
-
-def pesquisaDados(pesquisardb):
-    sql='SELECT * FROM cadastro WHERE nome = ?'
-    for row in c.execute(sql, (pesquisardb,)):
+def pesquisaDados(pesquisarDados_db):
+    sql_pesquisa='SELECT * FROM cadastro WHERE nome = ?'
+    for row in c.execute(sql_pesquisa, (pesquisarDados_db,)):
         print(row)
     connect.commit()
 
-#############################################
-###FUNÇÃO RELATAR DADOS DO BANCO DE DADOS####
-#############################################
+def relatarCadastros(relatarCadastros_db):
+    sql_relatar='SELECT * FROM cadastro;'
+    for row in c.execute(sql_relatar, (relatarCadastros_db)):
+        print(row)
 
-def relatarUsers(relatardb):
-    rel_sql='SELECT nome FROM cadastro'
-    for row_rel in c.execute(rel_sql, (relatardb,)):
-        print(row_rel)
+def deletarCadastro(deletarCadastro_db):
+    sql_deletar='DELETE FROM cadastro WHERE nome = ?'
+    for row in c.execute(sql_deletar, (deletarCadastro_db,)):
+        print(row)
     connect.commit()
 
-#############################################
-###FUNÇÃO DELETA DADOS NO BANCO DE DADOS#####
-#############################################
-
-#def deletarUsers(pesquisardb1):
- #   sql_del='DELETE nome FROM cadastro WHERE = ?'
-  #  for row in c.execute(sql, (pesquisardb,)):
-   #     print()
-    #connect.commit()
-
-######################################
-###SELECIONA FUNCAO A SER EXECUTADA###
-######################################
-
-funcao=int(input('1 - Cadastrar Pessoa Física\n2 - Consultar Cadastro PF\n3 - Relatório Usuários\n4 - Remover Usuário\n5 - Para sair\nSelecione a opção desejada:'))
-
-########CADASTRAR USER#########
-###SE OPÇÃO 1 FOR EXECUTADA####
-###############################
-              
+funcao= int(input('1 - Cadastrar Pessoa Física\n2 - Consultar Cadastro PF\n3 - Relatório de Cadastros\n4 - Deletar Cadastro\nSelecione a opção desejada:'))
+           
 if funcao == 1:
     try:
         print('Cadastrar Pessoa Física - JCAVI Treinamentos')
@@ -79,47 +43,34 @@ if funcao == 1:
         cpf=str(input('Digite o CPF: '))
         end=str(input('Digite o endereço: '))
         e=str(input('Digite o email: '))
-        tel=str(input('Digite o telefone:'))
-        empresa=str(input('Digite o nome da empresa:'))
-        cargo=str(input('Qual o seu cargo?'))
-        inserirDados(n, cpf, end, e, tel, empresa, cargo)
+        emp=str(input('Digite o nome da empresa: '))
+        carg=str(input('Digite o seu cargo: '))
+        inserirDados(n, cpf, end, e, emp, carg)
     except:
         print('Erro ao realizar cadastro do cliente')
     else:
         print('{}, foi cadastrado com sucesso.'.format(n))
-                
-########CONSULTAR USER#########
-###SE OPÇÃO 2 FOR EXECUTADA####
-###############################
               
 if funcao == 2:
     try:
         print('Consultar dados no Database...')
-        time.sleep(1)
         pesquisardb=str(input('Digite o nome a ser localizado: '))
         pesquisaDados(pesquisardb)
+        print('Pesquisa concluída.')
     except:
-        print('{} não foi localizado no cadastro'.format(pesquisardb))
-
-##########RELATAR USER#########
-###SE OPÇÃO 3 FOR EXECUTADA####
-###############################
+        print('Ocorreu um erro durante a pesquisa.')
 
 if funcao == 3:
     try:
-        print('Relatório de usuários cadastrados no sistema:')
-        time.sleep(1)
-        relatarUsers(pesquisardb)
-        time.sleep(3)
-        print('Pesquisa concluída.')
+        print('Relatório de usuários:')
+        relatarCadastros(sql_relatar)
     except:
-        print('Não foi possível realizar a consulta!')
+        print('Ocorreu um erro, não foi possível localizar os cadastros.')
 
-##########DELETAR USER#########
-###SE OPÇÃO 4 FOR EXECUTADA####
-###############################
-
-#if funcao == 4:    
-########FECHAR PROGRAM#########
-###SE OPÇÃO 5 FOR EXECUTADA####
-###############################
+if funcao == 4:
+    try:
+        deletarCadastro_db=str(input('Digite o nome a ser removido: '))
+        deletarCadastro(deletarCadastro_db)
+        print('{}, foi removido com sucesso.'.format(deletarCadastro_db))
+    except:
+        print('{} não foi localizado no cadastro.'.format(deletarCadastro_db))
